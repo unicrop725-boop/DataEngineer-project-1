@@ -27,5 +27,20 @@ services:
       - ./data:/home/jovyan/data
       - ./lake:/home/jovyan/lake
 
+  airflow:
+    build: ./airflow
+    container_name: airflow
+    command: standalone
+    environment:
+      AIRFLOW__CORE__LOAD_EXAMPLES: "false"
+      AIRFLOW_CONN_OLIST_SOURCE: '{"conn_type": "mssql", "login": "sa", "password": "${SQL_PASSWORD}", "host": "sqlserver", "port": 1433, "schema": "olist_source"}'
+    ports:
+      - "9090:8080"
+    volumes:
+      - ./dags:/opt/airflow/dags
+      - ./lake:/opt/airflow/lake
+    depends_on:
+      - sqlserver
+
 volumes:
   sqldata:
