@@ -1,0 +1,31 @@
+name: olist-platform
+
+services:
+  sqlserver:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    container_name: sqlserver
+    environment:
+      ACCEPT_EULA: "Y"
+      MSSQL_SA_PASSWORD: "${SQL_PASSWORD}"
+    ports:
+      - "1433:1433"
+    volumes:
+      - sqldata:/var/opt/mssql
+      - ./sql:/sql
+
+  spark:
+    image: quay.io/jupyter/pyspark-notebook:latest
+    container_name: spark
+    environment:
+      SQL_PASSWORD: "${SQL_PASSWORD}"
+    ports:
+      - "8888:8888"
+      - "4040:4040"
+    volumes:
+      - ./notebooks:/home/jovyan/notebooks
+      - ./scripts:/home/jovyan/scripts
+      - ./data:/home/jovyan/data
+      - ./lake:/home/jovyan/lake
+
+volumes:
+  sqldata:
